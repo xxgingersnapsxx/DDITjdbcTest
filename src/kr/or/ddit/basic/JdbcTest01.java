@@ -1,4 +1,4 @@
-package jdbcTest;
+package kr.or.ddit.basic;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
