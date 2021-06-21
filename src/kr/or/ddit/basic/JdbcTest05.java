@@ -54,8 +54,7 @@ public class JdbcTest05 {
 				}
 				if(ifExist == 1) {
 					System.out.println("이미 존재하는 LPROD_GU 입니다. 다시 입력하세요.");
-				}
-			}
+				}			}
 			System.out.print("LPROD_NM 입력 : ");
 			String lprodNm = scan.next();
 			builder = new StringBuilder();
