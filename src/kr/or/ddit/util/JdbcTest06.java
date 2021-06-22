@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
+// TODO 나는 finally Close 없음.. 선생님 코드 참고하기
 
 /*
 	회원 관리 프로그램을 작성하시오. (MYMEMBER 테이블 이용)
@@ -40,7 +41,7 @@ public class JdbcTest06 {
 	String memName = null;
 	String memTel = null;
 	String memAddr = null;
-	int ifExist = 1;
+	int ifExist;
 	
 	// 생성자
 	public JdbcTest06() {
@@ -57,24 +58,24 @@ public class JdbcTest06 {
 		while (true) {
 			int choice = displayMenu();
 			switch (choice) {
-			case 1:	// 자료 추가
+			case 1: // 자료 추가
 				insertMember();
 				break;
-			case 2:	// 자료 삭제
+			case 2: // 자료 삭제
 				deleteMember();
 				break;
-			case 3:	// 자료 수정
+			case 3: // 자료 수정
 				updateMember();
 				break;
-			case 4:	// 전체 자료 출력
+			case 4: // 전체 자료 출력
 				readAllMember();
 				break;
-			case 0:	// 작업 끝
-				
+			case 0: // 작업 끝
+				System.out.println("프로그램을 종료합니다.");
 				return;
-
 			default:
 				System.out.println("잘못 입력했습니다.");
+				System.out.println("다시 입력하세요.");
 				break;
 			}
 		}
@@ -93,31 +94,17 @@ public class JdbcTest06 {
 		int num = scanner.nextInt();
 		System.out.println();
 		
-		
 		return num;
 	}
 	
 	public void insertMember() {
 		try {
-			while (ifExist != 0) {
+			ifExist = 1;
+			while (ifExist == 1) {
 				System.out.print("추가할 회원 ID 입력 : ");
 				memId = scanner.next();
 				
-				builder = new StringBuilder();
-				builder.append("SELECT COUNT(MEM_ID) AS CNT");
-				builder.append("  FROM MYMEMBER");
-				builder.append(" WHERE MEM_ID LIKE ?");
-				
-				sql = builder.toString();
-				pstmt = conn.prepareStatement(sql);
-				
-				pstmt.setString(1, memId);
-				
-				rs = pstmt.executeQuery();
-				
-				while(rs.next()) {
-					ifExist = rs.getInt("CNT");
-				}
+				ifExist = ifExist(memId);
 				if(ifExist == 1) {
 					System.out.println("이미 존재하는 회원 아이디입니다. 다시 입력하세요.");
 				}
@@ -158,27 +145,15 @@ public class JdbcTest06 {
 
 	public void deleteMember() {
 		try {
+			
 			ifExist = 0;
 			
-			while (ifExist != 1) {
+			while (ifExist == 0) {
 				System.out.print("삭제할 회원 ID 입력 : ");
 				memId = scanner.next();
 				
-				builder = new StringBuilder();
-				builder.append("SELECT COUNT(MEM_ID) AS CNT");
-				builder.append("  FROM MYMEMBER");
-				builder.append(" WHERE MEM_ID LIKE ?");
+				ifExist = ifExist(memId);
 				
-				sql = builder.toString();
-				pstmt = conn.prepareStatement(sql);
-				
-				pstmt.setString(1, memId);
-				
-				rs = pstmt.executeQuery();
-				
-				while(rs.next()) {
-					ifExist = rs.getInt("CNT");
-				}
 				if(ifExist == 0) {
 					System.out.println("존재하지 않는 회원 아이디입니다. 다시 입력하세요.");
 				}
@@ -208,61 +183,65 @@ public class JdbcTest06 {
 		try {
 			ifExist = 0;
 			
-			while (ifExist != 1) {
+			while (ifExist == 0) {
 				System.out.print("수정할 회원 ID 입력 : ");
 				memId = scanner.next();
 				
-				builder = new StringBuilder();
-				builder.append("SELECT COUNT(MEM_ID) AS CNT");
-				builder.append("  FROM MYMEMBER");
-				builder.append(" WHERE MEM_ID LIKE ?");
+				ifExist = ifExist(memId);
 				
-				sql = builder.toString();
-				pstmt = conn.prepareStatement(sql);
-				
-				pstmt.setString(1, memId);
-				
-				rs = pstmt.executeQuery();
-				
-				while(rs.next()) {
-					ifExist = rs.getInt("CNT");
-				}
 				if(ifExist == 0) {
 					System.out.println("존재하지 않는 회원 아이디입니다. 다시 입력하세요.");
 				}
 			}
+			while (true) {
+				String menuName = null;
+				String inputData = null;
+				System.out.print("수정을 원하는 정보의 번호 입력(1.비밀번호 2.이름 3.전화번호 4.주소 0.종료) : ");
+				int choice = scanner.nextInt();
+				switch (choice) {
+				case 1: // 비밀번호 수정
+					menuName = "MEM_PASS";
+					System.out.print("수정할 비밀번호 입력 : ");
+					inputData = scanner.next();
+					updateSelection(menuName, inputData);
+					System.out.println(memId + "비밀번호 수정 완료");
+					break;
+				case 2: // 이름 수정
+					menuName = "MEM_NAME";
+					System.out.print("수정할 이름 입력 : ");
+					inputData = scanner.next();
+
+					updateSelection(menuName, inputData);
+					System.out.println(memId + "이름 수정 완료");
+					break;
+				case 3: // 전화번호 수정
+					menuName = "MEM_TEL";
+					System.out.print("수정할 전화번호 입력 : ");
+					inputData = scanner.next();
+
+					updateSelection(menuName, inputData);
+					System.out.println(memId + "전화번호 수정 완료");
+					break;
+				case 4: // 주소 수정
+					menuName = "MEM_ADDR";
+					System.out.print("수정할 주소 입력 : ");
+					inputData = scanner.next();
+					
+					updateSelection(menuName, inputData);
+					System.out.println(memId + "주소 수정 완료");
+					break;
+				case 0: // 종료
+					System.out.println();
+					System.out.println("회원 " + memId + " 수정 완료");
+					System.out.println();
+					return;
+				default:
+					break;
+				}
+			}
+
 			
-			System.out.print("수정할 비밀번호 입력 : ");
-			memPass = scanner.next();
-			System.out.print("수정할 이름 입력 : ");
-			memName = scanner.next();
-			System.out.print("수정할 전화번호 입력 : ");
-			memTel = scanner.next();
-			System.out.print("수정할 주소 입력 : ");
-			memAddr = scanner.next();
-			
-			builder = new StringBuilder();
-			builder.append("UPDATE MYMEMBER");
-			builder.append("   SET MEM_PASS = ?");
-			builder.append("     , MEM_NAME = ?");
-			builder.append("     , MEM_TEL = ?");
-			builder.append("     , MEM_ADDR = ?");
-			builder.append(" WHERE MEM_ID = ?");
-			
-			sql = builder.toString();
-			pstmt = conn.prepareStatement(sql);
-			
-			pstmt.setString(1, memPass);
-			pstmt.setString(2, memName);
-			pstmt.setString(3, memTel);
-			pstmt.setString(4, memAddr);
-			pstmt.setString(5, memId);
-			
-			pstmt.executeUpdate();
-			
-			System.out.println();
-			System.out.println("회원 " + memId + " 수정 완료");
-			System.out.println();
+
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -296,8 +275,47 @@ public class JdbcTest06 {
 	 * ID로 존재하는 회원인지 조회
 	 * @return boolean
 	 */
-	public boolean ifExist(String memId) {
-		
-		return true;
+	public int ifExist(String memId) {
+		try {
+			builder = new StringBuilder();
+			builder.append("SELECT COUNT(MEM_ID) AS CNT");
+			builder.append("  FROM MYMEMBER");
+			builder.append(" WHERE MEM_ID LIKE ?");
+			
+			sql = builder.toString();
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, memId);
+			
+			rs = pstmt.executeQuery();
+			int cnt = 0;
+			while(rs.next()) {
+				cnt = rs.getInt("CNT");
+			}
+
+			return ifExist = cnt;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return ifExist = -1;
+		} 
+	}
+	
+	/**
+	 * 업데이트 상세메뉴
+	 */
+	public void updateSelection(String menuName, String inputData) throws SQLException {
+		builder = new StringBuilder();
+		builder.append("UPDATE MYMEMBER");
+		builder.append("   SET " + menuName + " = ?");
+		builder.append(" WHERE MEM_ID = ?");
+
+		sql = builder.toString();
+		pstmt = conn.prepareStatement(sql);
+
+		pstmt.setString(1, inputData);
+		pstmt.setString(2, memId);
+
+		pstmt.executeUpdate();
 	}
 }
