@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
+import kr.or.ddit.util.DBUtil;
+
 /*
  	LPROD테이블에 새로운 데이터 추가하기
  	
@@ -25,8 +27,10 @@ public class JdbcTest05 {
 		StringBuilder builder = null;
 
 		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SJS94", "java");
+//			Class.forName("oracle.jdbc.driver.OracleDriver");
+//			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SJS94", "java");
+			
+			conn = DBUtil.getConnection();
 			
 			int ifExist = 1;
 			String sql = null;
@@ -59,7 +63,7 @@ public class JdbcTest05 {
 			String lprodNm = scan.next();
 			builder = new StringBuilder();
 			builder.append(" INSERT INTO LPROD(LPROD_ID, LPROD_GU, LPROD_NM)");
-			builder.append(" SELECT MAX(LPROD_ID) + 1, ?, ? FROM LPROD");
+			builder.append(" SELECT NVL(MAX(LPROD_ID), 0) + 1, ?, ? FROM LPROD");
 			
 			sql = builder.toString();
 			pstmt = conn.prepareStatement(sql);
@@ -73,9 +77,9 @@ public class JdbcTest05 {
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} finally {
+		} //catch (ClassNotFoundException e) {
+		 // 	e.printStackTrace();}
+		finally {
 			if(pstmt != null) {try {pstmt.close();} catch (SQLException e) {}}
 			if(conn != null) {try {conn.close();} catch (SQLException e) {}}
 			if(scan != null) {scan.close();}
