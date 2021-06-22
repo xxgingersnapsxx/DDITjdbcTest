@@ -1,4 +1,4 @@
-package kr.or.ddit.util;
+package kr.or.ddit.basic;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 // TODO 나는 finally Close 없음.. 선생님 코드 참고하기
+
+import kr.or.ddit.util.DBUtil;
 
 /*
 	회원 관리 프로그램을 작성하시오. (MYMEMBER 테이블 이용)
