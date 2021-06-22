@@ -19,6 +19,7 @@ import java.util.Scanner;
 		2. 자료 삭제
 		3. 자료 수정
 		4. 전체 자료 출력
+		5. 자료 수정 2
 		0. 작업 끝.
 	 	----------------
 	 	작업선택 >
@@ -27,6 +28,7 @@ import java.util.Scanner;
 	 	1) 자료 추가에서 '회원ID'는 중복되지 않는다.(중복되면 다시 입력받는다.)
 	 	2) 자료 삭제는 '회원ID'를 입력 받아서 처리한다.
 	 	3) 자료 수정에서는 '회원ID'는 변경하지 않는다.
+	 	4) 자료 수정 ==> 원하는 항목만 선택해서 수정되도록 한다.
 */
 public class JdbcTest06 {
 	Scanner scanner;
@@ -70,6 +72,9 @@ public class JdbcTest06 {
 			case 4: // 전체 자료 출력
 				readAllMember();
 				break;
+			case 5: // 자료 수정
+				updateMember2();
+				break;
 			case 0: // 작업 끝
 				System.out.println("프로그램을 종료합니다.");
 				return;
@@ -88,6 +93,7 @@ public class JdbcTest06 {
 		System.out.println("2. 자료 삭제");
 		System.out.println("3. 자료 수정");
 		System.out.println("4. 전체 자료 출력");
+		System.out.println("5. 전체 자료 출력");
 		System.out.println("0. 작업 끝.");
 		System.out.println("---------------");
 		System.out.print("작업선택 > ");
@@ -178,8 +184,59 @@ public class JdbcTest06 {
 			e.printStackTrace();
 		}
 	}
-	
 	public void updateMember() {
+		try {
+			ifExist = 0;
+			
+			while (ifExist == 0) {
+				System.out.print("수정할 회원 ID 입력 : ");
+				memId = scanner.next();
+				
+				ifExist = ifExist(memId);
+				
+				if(ifExist == 0) {
+					System.out.println("존재하지 않는 회원 아이디입니다. 다시 입력하세요.");
+				}
+			}
+		
+			System.out.print("수정할 비밀번호 입력 : ");
+			memPass = scanner.next();
+			System.out.print("수정할 이름 입력 : ");
+			memName = scanner.next();
+			System.out.print("수정할 전화번호 입력 : ");
+			memTel = scanner.next();
+			System.out.print("수정할 주소 입력 : ");
+			memAddr = scanner.next();
+
+			builder = new StringBuilder();
+			builder.append("UPDATE MYMEMBER");
+			builder.append("   SET MEM_PASS = ?");
+			builder.append("     , MEM_NAME = ?");
+			builder.append("     , MEM_TEL = ?");
+			builder.append("     , MEM_ADDR = ?");
+			builder.append(" WHERE MEM_ID = ?");
+
+			sql = builder.toString();
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setString(1, memPass);
+			pstmt.setString(2, memName);
+			pstmt.setString(3, memTel);
+			pstmt.setString(4, memAddr);
+			pstmt.setString(5, memId);
+
+			pstmt.executeUpdate();
+
+			System.out.println();
+			System.out.println("회원 " + memId + " 수정 완료");
+			System.out.println();
+
+				
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public void updateMember2() {
 		try {
 			ifExist = 0;
 			
