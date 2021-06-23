@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
-// TODO 나는 finally Close 없음.. 선생님 코드 참고하기
+// 나는 finally Close 없음.. 선생님 코드 참고하기
 
 import kr.or.ddit.util.DBUtil;
 

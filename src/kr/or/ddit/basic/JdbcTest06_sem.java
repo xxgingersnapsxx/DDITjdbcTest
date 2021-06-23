@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
-import javax.swing.plaf.synth.SynthSeparatorUI;
-
 import kr.or.ddit.util.DBUtil;
+
+// 선생님 파일 다시 받아와야해.... TODO
 
 /*
 	회원 관리 프로그램을 작성하시오. (MYMEMBER 테이블 이용)
@@ -59,6 +59,8 @@ public class JdbcTest06_sem {
 					break;
 				case 4 :			// 전체 자료 출력
 					displayAllMember(); break;
+				case 5 :			// 전체 자료 출력
+					updateMember(); break;
 				case 0 :
 					System.out.println("프로그램을 종료합니다.");
 					return;
@@ -85,7 +87,60 @@ public class JdbcTest06_sem {
 			return;
 		}
 		
+		int num;	// 선택한 항목의 번호가 저장될 변수
+		String updateField = null; // 수정할 컬럼명이 저장될 변수
+		String updateTitle = null; // 
+		do {
+			System.out.println();
+			System.out.println("수정할 항목을 선택하세요");
+			System.out.println("1. 비밀번호   2. 회원 이름   3. 전화번호   4. 주소");
+			System.out.println("----------------------------------------------------");
+			System.out.println("수정 항목 선택 >> ");
+			num = scan.nextInt();
+			
+			switch (num) {
+			case 1 : updateField = "MEM_PASS"; updateTitle = "비밀번호";
+					 break;
+			case 2 : updateField = "MEM_NAME"; updateTitle = "회원이름";
+				     break;
+			case 3 : updateField = "MEM_TEL"; updateTitle = "전화번호";
+					 break;
+			case 4 : updateField = "MEM_ADDR"; updateTitle = "회원주소";
+				     break;
+			default:
+				System.out.println("수정할 항목을 잘못 선택했습니다.");
+				System.out.println("다시 선택하세요.");
+			}
+		} while (num < 1 || num > 4);
+		
 		System.out.println("수정할 내용을 입력하세요.");
+		scan.nextLine();	// 입력 버퍼 비우기
+		System.out.println("새로운 " + updateTitle + "  >> ");
+		String updateData = scan.nextLine();	// 주소가 있으므로 nextLine
+		
+		try {
+			conn = DBUtil.getConnection();
+
+			String sql = "UPDATE MYMEMBER SET " + updateField + " = ? WHERE MEM_ID = ?";
+
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, updateData);
+			pstmt.setString(2, memId);
+
+			int cnt = pstmt.executeUpdate();
+
+			if (cnt > 0) {
+				System.out.println("수정 작업 성공~~");
+			} else {
+				System.out.println("수정 작업 실패!!!");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if(pstmt!=null) try {pstmt.close();}catch(SQLException e) {}
+			if(conn!=null) try {conn.close();}catch(SQLException e) {}
+		}	
 
 		System.out.print("새로운 패스워드 >> ");
 		String memPass = scan.next();
