@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
 // JDBC드라이버를 로딩하고 Connection 객체를 생성하여 반환하는 메서드로 구성된 class이다. 
 
 // dbinfo.properties파일의 내용을 읽어서 설정하는 방법
-// 방법2) ResourceBundle객체 이용하기
+// 방법2) ResourceBundle객체 이용하기 
 public class DBUtil3 {
 	static ResourceBundle bundle;	// ResourceBundle 객체 변수 선언
 
