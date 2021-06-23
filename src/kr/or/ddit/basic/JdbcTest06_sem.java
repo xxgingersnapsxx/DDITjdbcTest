@@ -61,7 +61,7 @@ public class JdbcTest06_sem {
 				case 4 :			// 전체 자료 출력
 					displayAllMember(); break;
 				case 5 :			// 전체 자료 출력
-					updateMember(); break;
+					updateMember2(); break;
 				case 0 :
 					System.out.println("프로그램을 종료합니다.");
 					return;
@@ -71,9 +71,64 @@ public class JdbcTest06_sem {
 			}
 		}
 	}
-	
 	// 회원 정보를 수정하는 메서드
 	private void updateMember() {
+	      Connection conn = null;
+	      PreparedStatement pstmt = null;
+	      
+	      System.out.println("수정할 회원 정보를 입력하세요.");
+	      System.out.print("회원 ID >> ");
+	      String memId = scan.next();
+	      int count = getMemberCount(memId);
+	      if (count == 0) {//없는 회원id를 입력했을 경우
+	         System.out.println(memId + "은(는) 없는 회원 ID 입니다.");
+	         System.out.println("수정 작업을 종료합니다.");
+	         return;
+	      }
+	      
+	      System.out.println("수정할 내용을 입력하세요.");
+	      System.out.print("새로운 패스워드 >> ");
+	      String memPass = scan.next();
+	      System.out.print("새로운 이름 >> ");
+	      String memName = scan.next();
+	      System.out.print("새로운 전화번호 >> ");
+	      String memTel = scan.next();
+	      
+	      scan.nextLine();
+	      System.out.print("새로운 주소 >> ");
+	      String memAddr = scan.nextLine();
+	      
+	      try {
+	         conn = DBUtil.getConnection();
+	         
+	         String sql = "update mymember set mem_pass=?,"
+	               + "mem_name=?, mem_tel=?, mem_addr=?"
+	               + "where mem_id=?";
+	         pstmt = conn.prepareStatement(sql);
+	         pstmt.setString(1,memPass);
+	         pstmt.setString(2,memName);
+	         pstmt.setString(3,memTel);
+	         pstmt.setString(4,memAddr);
+	         pstmt.setString(5,memId);
+	         
+	         int cnt = pstmt.executeUpdate();
+	         if(cnt>0) {
+	            System.out.println("수정 작업 성공!!");
+	         }else {
+	            System.out.println("수정 작업 실패!!");
+	         }
+	      } catch (SQLException e) {
+	         e.printStackTrace();
+	      }finally {
+	         if(pstmt!=null)try {pstmt.close();} catch (SQLException e2) {}
+	         if(conn!=null)try {conn.close();} catch (SQLException e2) {}
+	      }
+	      
+	      
+	      
+	   }
+	// 회원 정보를 수정하는 메서드
+	private void updateMember2() {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		
