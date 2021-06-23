@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.Scanner;
 
 import kr.or.ddit.util.DBUtil;
+import kr.or.ddit.util.DBUtil3;
 
 // 선생님 파일 다시 받아와야해.... TODO
 
@@ -328,7 +329,8 @@ public class JdbcTest06_sem {
 		System.out.println("------------------------------------------");
 		
 		try {
-			conn = DBUtil.getConnection();
+			// Properties객체를 사용한 DBUtil2가 잘 되는지 Test
+			conn = DBUtil3.getConnection();
 			
 			String sql = "select * from mymember";
 			stmt = conn.createStatement();
