@@ -8,7 +8,7 @@ import kr.or.ddit.mvc.vo.MemberVO;
 
 public class MemberServiceImpl implements IMemberService {
 	private IMemberDao memDao;
-
+	
 	public MemberServiceImpl() {
 		memDao = new MemberDaoImpl();
 	}
@@ -19,8 +19,8 @@ public class MemberServiceImpl implements IMemberService {
 	}
 
 	@Override
-	public int deletetMember(String memId) {
-		return memDao.deletetMember(memId);
+	public int deleteMember(String memId) {
+		return memDao.deleteMember(memId);
 	}
 
 	@Override
