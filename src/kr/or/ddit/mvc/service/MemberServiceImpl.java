@@ -1,6 +1,7 @@
 package kr.or.ddit.mvc.service;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.or.ddit.mvc.dao.IMemberDao;
 import kr.or.ddit.mvc.dao.MemberDaoImpl;
@@ -26,6 +27,11 @@ public class MemberServiceImpl implements IMemberService {
 	@Override
 	public int updateMember(MemberVO memVo) {
 		return memDao.updateMember(memVo);
+	}
+
+	@Override
+	public int updateMember2(Map<String, String> paraMap) {
+		return memDao.updateMember2(paraMap);
 	}
 
 	@Override

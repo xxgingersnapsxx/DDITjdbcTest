@@ -7,10 +7,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
-import kr.or.ddit.util.DBUtil;
-import kr.or.ddit.util.DBUtil3;
+import javax.swing.plaf.synth.SynthSeparatorUI;
 
-// 선생님 파일 다시 받아와야해.... TODO
+import kr.or.ddit.util.DBUtil;
+import kr.or.ddit.util.DBUtil2;
+import kr.or.ddit.util.DBUtil3;
 
 /*
 	회원 관리 프로그램을 작성하시오. (MYMEMBER 테이블 이용)
@@ -56,12 +57,11 @@ public class JdbcTest06_sem {
 					deleteMember();
 					break;
 				case 3 :			// 수정
-					updateMember();
-					break;
+					updateMember();	break;
 				case 4 :			// 전체 자료 출력
 					displayAllMember(); break;
-				case 5 :			// 전체 자료 출력
-					updateMember2(); break;
+				case 5 :			// 수정2
+					updateMember2();	break;
 				case 0 :
 					System.out.println("프로그램을 종료합니다.");
 					return;
@@ -71,63 +71,8 @@ public class JdbcTest06_sem {
 			}
 		}
 	}
-	// 회원 정보를 수정하는 메서드
-	private void updateMember() {
-	      Connection conn = null;
-	      PreparedStatement pstmt = null;
-	      
-	      System.out.println("수정할 회원 정보를 입력하세요.");
-	      System.out.print("회원 ID >> ");
-	      String memId = scan.next();
-	      int count = getMemberCount(memId);
-	      if (count == 0) {//없는 회원id를 입력했을 경우
-	         System.out.println(memId + "은(는) 없는 회원 ID 입니다.");
-	         System.out.println("수정 작업을 종료합니다.");
-	         return;
-	      }
-	      
-	      System.out.println("수정할 내용을 입력하세요.");
-	      System.out.print("새로운 패스워드 >> ");
-	      String memPass = scan.next();
-	      System.out.print("새로운 이름 >> ");
-	      String memName = scan.next();
-	      System.out.print("새로운 전화번호 >> ");
-	      String memTel = scan.next();
-	      
-	      scan.nextLine();
-	      System.out.print("새로운 주소 >> ");
-	      String memAddr = scan.nextLine();
-	      
-	      try {
-	         conn = DBUtil.getConnection();
-	         
-	         String sql = "update mymember set mem_pass=?,"
-	               + "mem_name=?, mem_tel=?, mem_addr=?"
-	               + "where mem_id=?";
-	         pstmt = conn.prepareStatement(sql);
-	         pstmt.setString(1,memPass);
-	         pstmt.setString(2,memName);
-	         pstmt.setString(3,memTel);
-	         pstmt.setString(4,memAddr);
-	         pstmt.setString(5,memId);
-	         
-	         int cnt = pstmt.executeUpdate();
-	         if(cnt>0) {
-	            System.out.println("수정 작업 성공!!");
-	         }else {
-	            System.out.println("수정 작업 실패!!");
-	         }
-	      } catch (SQLException e) {
-	         e.printStackTrace();
-	      }finally {
-	         if(pstmt!=null)try {pstmt.close();} catch (SQLException e2) {}
-	         if(conn!=null)try {conn.close();} catch (SQLException e2) {}
-	      }
-	      
-	      
-	      
-	   }
-	// 회원 정보를 수정하는 메서드
+	
+	// 회원 정보를 수정하는 메서드 ==> 원하는 항목만 수정하기
 	private void updateMember2() {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -143,60 +88,82 @@ public class JdbcTest06_sem {
 			return;
 		}
 		
-		int num;	// 선택한 항목의 번호가 저장될 변수
-		String updateField = null; // 수정할 컬럼명이 저장될 변수
-		String updateTitle = null; // 
+		int num;  // 선택한 항목의 번호가 저장될 변수
+		String updateField = null;  // 수정할 컬럼명이 저장될 변수
+		String updateTitle = null;  
 		do {
 			System.out.println();
-			System.out.println("수정할 항목을 선택하세요");
-			System.out.println("1. 비밀번호   2. 회원 이름   3. 전화번호   4. 주소");
-			System.out.println("----------------------------------------------------");
-			System.out.println("수정 항목 선택 >> ");
+			System.out.println("수정할 항목을 선택하세요.");
+			System.out.println("1.비밀번호     2.회원이름    3.전화번호   4.회원주소");
+			System.out.println("---------------------------------------");
+			System.out.print("수정 항목 선택 >> ");
 			num = scan.nextInt();
 			
-			switch (num) {
-			case 1 : updateField = "MEM_PASS"; updateTitle = "비밀번호";
-					 break;
-			case 2 : updateField = "MEM_NAME"; updateTitle = "회원이름";
-				     break;
-			case 3 : updateField = "MEM_TEL"; updateTitle = "전화번호";
-					 break;
-			case 4 : updateField = "MEM_ADDR"; updateTitle = "회원주소";
-				     break;
-			default:
-				System.out.println("수정할 항목을 잘못 선택했습니다.");
-				System.out.println("다시 선택하세요.");
+			switch(num) {
+				case 1 : updateField = "mem_pass"; updateTitle = "비밀번호";
+						break;
+				case 2 : updateField = "mem_name"; updateTitle = "회원이름";
+						break;
+				case 3 : updateField = "mem_tel"; updateTitle = "전화번호";
+						break;
+				case 4 : updateField = "mem_addr"; updateTitle = "회원주소";
+						break;
+				default :
+					System.out.println("수정할 항목을 잘못 선택했습니다.");
+					System.out.println("다시 선택하세요.");
 			}
-		} while (num < 1 || num > 4);
+			
+		}while(num<1 || num>4);
 		
-		System.out.println("수정할 내용을 입력하세요.");
-		scan.nextLine();	// 입력 버퍼 비우기
-		System.out.println("새로운 " + updateTitle + "  >> ");
-		String updateData = scan.nextLine();	// 주소가 있으므로 nextLine
+		System.out.println();
+		scan.nextLine();  // 입력 버퍼 비우기
+		System.out.print("새로운 " + updateTitle + " >> ");
+		String updateData = scan.nextLine();
 		
 		try {
 			conn = DBUtil.getConnection();
-
-			String sql = "UPDATE MYMEMBER SET " + updateField + " = ? WHERE MEM_ID = ?";
-
+			
+			String sql = "update mymember set " + updateField +	" = ? "
+						+ " where mem_id = ?";
+			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, updateData);
 			pstmt.setString(2, memId);
-
+			
 			int cnt = pstmt.executeUpdate();
-
-			if (cnt > 0) {
+			
+			if(cnt>0) {
 				System.out.println("수정 작업 성공~~");
-			} else {
+			}else {
 				System.out.println("수정 작업 실패!!!");
 			}
-
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			if(pstmt!=null) try {pstmt.close();}catch(SQLException e) {}
 			if(conn!=null) try {conn.close();}catch(SQLException e) {}
-		}	
+		}
+	}
+	
+	
+	// 회원 정보를 수정하는 메서드
+	private void updateMember() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		
+		System.out.println("수정할 회원 정보를 입력하세요.");
+		System.out.print("회원ID >> ");
+		String memId = scan.next();
+		
+		int count = getMemberCount(memId);
+		if(count == 0) { // 없는 회원ID를 입력했을 경우
+			System.out.println(memId + "은(는) 없는 회원ID 입니다.");
+			System.out.println("수정 작업을 종료합니다.");
+			return;
+		}
+		
+		System.out.println("수정할 내용을 입력하세요.");
 
 		System.out.print("새로운 패스워드 >> ");
 		String memPass = scan.next();
@@ -384,7 +351,8 @@ public class JdbcTest06_sem {
 		System.out.println("------------------------------------------");
 		
 		try {
-			// Properties객체를 사용한 DBUtil2가 잘 되는지 Test
+			//conn = DBUtil.getConnection();
+			//conn = DBUtil2.getConnection();
 			conn = DBUtil3.getConnection();
 			
 			String sql = "select * from mymember";
@@ -419,6 +387,7 @@ public class JdbcTest06_sem {
 		System.out.println("    2. 자료 삭제");
 		System.out.println("    3. 자료 수정");
 		System.out.println("    4. 전체 자료 출력");
+		System.out.println("    5. 자료 수정2");
 		System.out.println("    0. 작업 끝.");
 		System.out.println("--------------------");
 		System.out.print("작업 선택 >> ");
