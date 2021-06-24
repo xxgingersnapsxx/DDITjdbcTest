@@ -25,7 +25,7 @@ public class MemberDaoImpl implements IMemberDao{
 					+ "mem_tel, mem_addr) values (?, ?, ?, ?, ?)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, memVo.getMem_id());
-			pstmt.setString(2, memVo.getMem_pass());
+			pstmt.setString(2, memVo.getMem_pass()); 
 			pstmt.setString(3, memVo.getMem_name());
 			pstmt.setString(4, memVo.getMem_tel());
 			pstmt.setString(5, memVo.getMem_addr());
