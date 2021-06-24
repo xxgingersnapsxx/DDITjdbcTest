@@ -12,19 +12,7 @@ import java.util.Map;
 import kr.or.ddit.mvc.vo.MemberVO;
 import kr.or.ddit.util.DBUtil3;
 
-public class MemberDaoImpl implements IMemberDao {
-	
-	// 1번
-	private static MemberDaoImpl dao;
-	
-	// 2번
-	private MemberDaoImpl() { }
-	
-	// 3번
-	public static MemberDaoImpl getInstance() {
-		if(dao == null) dao = new MemberDaoImpl();
-		return dao;
-	}
+public class MemberDaoImplNoSingleton implements IMemberDao {
 
 	@Override
 	public int insertMember(MemberVO memVo) {

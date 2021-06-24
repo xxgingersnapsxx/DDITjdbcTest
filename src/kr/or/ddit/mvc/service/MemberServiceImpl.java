@@ -8,11 +8,31 @@ import kr.or.ddit.mvc.dao.MemberDaoImpl;
 import kr.or.ddit.mvc.vo.MemberVO;
 
 public class MemberServiceImpl implements IMemberService {
+
 	private IMemberDao memDao;
-	
-	public MemberServiceImpl() {
-		memDao = new MemberDaoImpl();
+
+	// 1번
+	private static MemberServiceImpl service;
+
+	// 2번
+	private MemberServiceImpl() {
+		// singleton 사용
+		memDao = MemberDaoImpl.getInstance();
+
+		// singleton 사용하지 않음
+		// memDao = new MemberDaoImpl();
+
 	}
+
+	// 3번
+	public static MemberServiceImpl getInstance() {
+		if (service == null)
+			service = new MemberServiceImpl();
+		return service;
+	}
+	
+	
+	
 	
 	@Override
 	public int insertMember(MemberVO memVo) {

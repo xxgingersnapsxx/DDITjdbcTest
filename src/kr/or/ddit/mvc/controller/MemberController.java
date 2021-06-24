@@ -1,8 +1,5 @@
 package kr.or.ddit.mvc.controller;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,15 +8,18 @@ import java.util.Scanner;
 import kr.or.ddit.mvc.service.IMemberService;
 import kr.or.ddit.mvc.service.MemberServiceImpl;
 import kr.or.ddit.mvc.vo.MemberVO;
-import kr.or.ddit.util.DBUtil;
-import kr.or.ddit.util.DBUtil3;
 
 public class MemberController {
 	private Scanner scan = new Scanner(System.in);
 	private IMemberService service;
 
 	public MemberController() {
-		service = new MemberServiceImpl();
+		
+		// singleton 사용
+		service = MemberServiceImpl.getInstance();
+		
+		// singleton 사용하지 않음
+//		service = new MemberServiceImpl();
 	}
 
 	public static void main(String[] args) {
