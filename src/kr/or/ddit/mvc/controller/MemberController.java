@@ -45,6 +45,9 @@ public class MemberController {
 			case 5: // 수정2
 				updateMember2();
 				break;
+			case 6: // 엑셀로 출력
+				createExcel();
+				break;
 			case 0:
 				System.out.println("프로그램을 종료합니다.");
 				return;
@@ -53,6 +56,16 @@ public class MemberController {
 				System.out.println("다시 입력 하세요.");
 			}
 		}
+	}
+
+	// 엑셀 파일로 출력하는 메소드
+	private void createExcel() {
+		// TODO 엑셀
+		System.out.print("파일명 입력 >> ");
+		String fileName = scan.next();
+		String filePath = "D:/D_Other/" + fileName + ".xlsx";
+		List memList = service.getAllMemberList();
+		service.createExcelFile(memList, filePath);
 	}
 
 	// 선택 항목만 수정
@@ -264,6 +277,7 @@ public class MemberController {
 		System.out.println("    3. 자료 수정");
 		System.out.println("    4. 전체 자료 출력");
 		System.out.println("    5. 자료 수정 2");
+		System.out.println("    6. 엑셀 파일 출력");
 		System.out.println("    0. 작업 끝.");
 		System.out.println("--------------------");
 		System.out.print("작업 선택 >> ");

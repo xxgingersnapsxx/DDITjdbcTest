@@ -10,12 +10,11 @@ import java.util.ResourceBundle;
 // dbinfo.properties파일의 내용을 읽어서 설정하는 방법
 // 방법2) ResourceBundle객체 이용하기 
 public class DBUtil3 {
-	static ResourceBundle bundle;	// ResourceBundle 객체 변수 선언
+	static ResourceBundle bundle; // ResourceBundle 객체 변수 선언
 
 	static { // static 초기화 블럭
 
 		bundle = ResourceBundle.getBundle("kr.or.ddit.config.dbinfo");
-
 		try {
 			// Class.forName("oracle.jdbc.driver.OracleDriver");
 			Class.forName(bundle.getString("driver"));

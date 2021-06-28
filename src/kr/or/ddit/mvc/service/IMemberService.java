@@ -54,4 +54,9 @@ public interface IMemberService {
 	 */
 	public int getMemberCount(String memId);
 	
+	/**
+	 * MemberVo를 매개변수로 받아서 엑셀 파일로 출력하는 메서드
+	 * @param memVo
+	 */
+	public void createExcelFile(List memList, String filePath);
 }

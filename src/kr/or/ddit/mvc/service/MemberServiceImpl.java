@@ -64,4 +64,10 @@ public class MemberServiceImpl implements IMemberService {
 		return memDao.getMemberCount(memId);
 	}
 
+	@Override
+	public void createExcelFile(List memList, String filePath) {
+		memDao.createExcelFile(memList, filePath);
+	}
+
+	
 }

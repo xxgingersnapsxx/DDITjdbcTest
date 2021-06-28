@@ -53,7 +53,7 @@ public class JdbcBoardController {
 		int boardNo = scan.nextInt();
 		System.out.println();
 		
-		
+		// 게시글 보기를 할 때 조회수를 증가해야 하는데 이 작업은 service에서 진행한다.
 		JdbcBoardVO boardVo = service.getReadBoard(boardNo);
 		
 		int cnt = service.getBoardCount(boardNo);
@@ -74,7 +74,7 @@ public class JdbcBoardController {
 					updateContent(boardNo);
 					break;
 				case 2: // 삭제
-					service.deleteBoard(boardNo);
+					deleteBoard(boardNo);
 					break;
 				case 3: // 리스트로 가기
 					System.out.println("목록으로 돌아갑니다..");
@@ -89,12 +89,25 @@ public class JdbcBoardController {
 		}
 	}
 
-	
+	/**
+	 * 게시글 삭제 메서드
+	 * @param boardNo
+	 */
+	private void deleteBoard(int boardNo) {
+		int cnt = service.deleteBoard(boardNo);
+		
+		if (cnt > 0) {
+			System.out.println(boardNo + "번글이 삭제되었습니다.");
+		} else {
+			System.out.println("삭제 작업 실패!!");
+		}
+	}
+
 	/**
 	 * 게시글 수정 메소드
 	 */
 	private void updateContent(int boardNo) {
-		scan.nextLine();
+		scan.nextLine();	// 입력 버퍼 비우기
 		System.out.println();
 		System.out.println("수정 작업하기");
 		System.out.println("-----------------------------------");

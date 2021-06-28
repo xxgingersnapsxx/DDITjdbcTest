@@ -1,5 +1,8 @@
 package kr.or.ddit.mvc.dao;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,20 +12,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import kr.or.ddit.mvc.vo.MemberVO;
 import kr.or.ddit.util.DBUtil3;
 
 public class MemberDaoImpl implements IMemberDao {
-	
+
 	// 1번
 	private static MemberDaoImpl dao;
-	
+
 	// 2번
-	private MemberDaoImpl() { }
-	
+	private MemberDaoImpl() {
+	}
+
 	// 3번
 	public static MemberDaoImpl getInstance() {
-		if(dao == null) dao = new MemberDaoImpl();
+		if (dao == null)
+			dao = new MemberDaoImpl();
 		return dao;
 	}
 
@@ -267,6 +281,81 @@ public class MemberDaoImpl implements IMemberDao {
 		}
 
 		return cnt;
+	}
+
+	@Override
+	public void createExcelFile(List memList, String filePath) {
+		// TODO 여기 하는중
+		XSSFWorkbook workbook = new XSSFWorkbook();
+
+		XSSFSheet sheet1 = workbook.createSheet("테스트 시트1");
+
+		// 폰트 설정
+		XSSFFont font = workbook.createFont();
+		font.setFontName(HSSFFont.FONT_ARIAL); // 폰트 스타일
+		font.setFontHeightInPoints((short) 10); // 폰트 크기
+		font.setBold(true); // 폰트 볼드여부
+
+		// 셀 가운데 정렬
+		XSSFCellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setAlignment(HorizontalAlignment.CENTER);
+		cellStyle.setFont(font);
+
+		// TODO 데이터 받아오는 방식 수정
+		List<MemberVO> memVoData = memList;
+		for (MemberVO memberVO : memVoData) {
+			memVoData.add(new MemberVO(memberVO.getMem_id(), memberVO.getMem_pass(), memberVO.getMem_name(), memberVO.getMem_tel(), memberVO.getMem_addr()));
+		}
+
+		System.out.println("Excel파일을 생성합니다.");
+
+		String colData = null;
+		int rowNum = 0; // 열 카운트용 변수 생성
+		for (int i = 0; i < memVoData.size(); i++) { // data1의 데이터를 Object객체의 rowData변수에 넣음
+			Row row = sheet1.createRow(rowNum++); // 열 생성 메소드
+
+			int colNum = 0; // 행 카운트용 변수 생성
+			for (int j = 0; j < 5; j++) { // data1의 데이터를 Object객체의 rowData변수에 넣음
+				Cell cell = row.createCell(colNum++);
+				cell.setCellStyle(cellStyle); // 셀 가운데 정렬
+
+				switch (j) {
+				case 0:
+					colData = memVoData.get(i).getMem_id();
+					break;
+				case 1:
+					colData = memVoData.get(i).getMem_pass();
+					break;
+				case 2:
+					colData = memVoData.get(i).getMem_name();
+					break;
+				case 3:
+					colData = memVoData.get(i).getMem_tel();
+					break;
+				case 4:
+					colData = memVoData.get(i).getMem_addr();
+					break;
+				default:
+					break;
+				}
+				if (colData instanceof String) { // String타입으로 형변환가능한지 여부
+					cell.setCellValue((String) colData);
+				}
+			}
+
+		}
+
+		try {
+			FileOutputStream fos = new FileOutputStream(filePath);
+			workbook.write(fos);
+			workbook.close();
+			System.out.println("Excel파일을 생성하였습니다.");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }

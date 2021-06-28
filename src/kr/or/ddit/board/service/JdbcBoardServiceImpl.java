@@ -39,8 +39,15 @@ public class JdbcBoardServiceImpl implements IJdbcBoardService {
 
 	@Override
 	public JdbcBoardVO getReadBoard(int boardNo) {
-		boardDao.updateBoardCnt(boardNo);
-		return boardDao.getReadBoard(boardNo);
+		// 게시글 번호에 해당하는 데이터들을 가져오기 전에 조회수를 증가시키고
+		// 조회수 증가가 성공되면 게시글 데이터들을 가져온다.
+
+		int cnt = boardDao.updateBoardCnt(boardNo);
+		if (cnt > 0) { // 조회수 증가 성공 후
+			return boardDao.getReadBoard(boardNo);
+		} else { // 조회수 증가 실패 후
+			return null;
+		}
 	}
 
 	@Override
