@@ -39,7 +39,7 @@ public interface IJdbcBoardService {
 	 * @param boardVo update할 게시글정보가 저장된 JdbcBoardVO객체
 	 * @return 작업 성공 : 1, 작업 실패 : 0
 	 */
-	public int updateBoard(Map<String, String> paramMap, int boardNo);
+	public int updateBoard(JdbcBoardVO boardVo);
 	
 	/**
 	 * 게시글 번호를 매개변수로 받아서 해당 게시글을 삭제하는 메서드

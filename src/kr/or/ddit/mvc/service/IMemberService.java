@@ -53,4 +53,5 @@ public interface IMemberService {
 	 * @return 검색된 회원의 개수
 	 */
 	public int getMemberCount(String memId);
+	
 }

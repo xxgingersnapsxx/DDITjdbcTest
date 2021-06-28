@@ -26,20 +26,31 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 		return dao;
 	}
 	
+	// DB작업에 필요한 객체 변수들 선언
+	private Connection conn;
+	private Statement stmt;
+	private PreparedStatement pstmt;
+	private ResultSet rs;
+	
+	// 사용했던 자원을 반납하는 메서드
+	private void disConnect() {
+		if(pstmt != null) try {pstmt.close();} catch(SQLException e) {}
+		if(conn != null) try {conn.close();} catch(SQLException e) {}
+		if(stmt != null) try {stmt.close();} catch(SQLException e) {}
+		if(rs != null) try {rs.close();} catch(SQLException e) {}
+	}
+	
 	@Override
 	public int insertBoard(JdbcBoardVO boardVo) {
 		int cnt = 0; // 반환값이 저장될 변수
-		
-		Connection conn = null;
-		PreparedStatement pstmt = null;
 		
 		try {
 			conn = DBUtil3.getConnection();
 			
 			StringBuilder builder = new StringBuilder();
-			builder.append("INSERT INTO JDBC_BOARD(BOARD_NO, BOARD_TITLE, BOARD_WRITER");
-			builder.append("                     , BOARD_DATE, BOARD_CNT, BOARD_CONTENT)");
-			builder.append("VALUES(BOARD_SEQ.NEXTVAL, ?, ?, SYSDATE, DEFAULT, ?)");
+			builder.append(" INSERT INTO JDBC_BOARD(BOARD_NO, BOARD_TITLE, BOARD_WRITER");
+			builder.append("                      , BOARD_DATE, BOARD_CNT, BOARD_CONTENT)");
+			builder.append(" VALUES(BOARD_SEQ.NEXTVAL, ?, ?, SYSDATE, DEFAULT, ?)");
 			
 			String sql = builder.toString();
 			
@@ -54,8 +65,7 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 			cnt = 0;
 			e.printStackTrace();
 		} finally {
-			if(pstmt != null) try {pstmt.close();} catch(SQLException e) {}
-			if(conn != null) try {conn.close();} catch(SQLException e) {}
+			disConnect();
 		}
 		return cnt;
 	}
@@ -64,16 +74,15 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 	public List<JdbcBoardVO> getAllBoardList() {
 		List<JdbcBoardVO> boardList = new ArrayList<>();
 		
-		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
-		
 		try {
 			conn = DBUtil3.getConnection();
 			
 			StringBuilder builder = new StringBuilder();
-			builder.append("SELECT BOARD_NO, BOARD_TITLE, BOARD_WRITER, BOARD_DATE, BOARD_CNT, BOARD_CONTENT");
+			builder.append(" SELECT BOARD_NO, BOARD_TITLE, BOARD_WRITER");
+			builder.append("      , TO_CHAR(BOARD_DATE, 'YYYY-MM-DD') AS BOARD_DATE");
+			builder.append("      , BOARD_CNT, BOARD_CONTENT");
 			builder.append("  FROM JDBC_BOARD");
+			builder.append(" ORDER BY BOARD_NO DESC");
 			
 			String sql = builder.toString();
 			
@@ -92,7 +101,6 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 				String boardContent = rs.getString("BOARD_CONTENT");
 				
 				boardVo.setBoard_no(boardNo);
-				boardVo.setBoard_title(boardTitle);
 				boardVo.setBoard_title(boardTitle);
 				boardVo.setBoard_writer(boardWriter);
 				boardVo.setBoard_date(boardDate);
@@ -116,10 +124,10 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 	public List<JdbcBoardVO> getSearchBoard(String keyWord) {
 		List<JdbcBoardVO> boardList = new ArrayList<>();
 		
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		
+		if (keyWord == null) {
+			keyWord = "";
+		}
+
 		try {
 			conn = DBUtil3.getConnection();
 			
@@ -170,10 +178,6 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 	public JdbcBoardVO getReadBoard(int boardNo) {
 		JdbcBoardVO boardVo = new JdbcBoardVO();
 
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
 		try {
 			conn = DBUtil3.getConnection();
 
@@ -219,11 +223,9 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 	}
 
 	@Override
-	public int updateBoard(Map<String, String> paramMap, int boardNo) {
+	public int updateBoard(JdbcBoardVO boardVo) {
 		// Key값 정보 : 제목(title), 내용(content)
 		int cnt = 0;
-		Connection conn = null;
-		PreparedStatement pstmt = null;
 
 		try {
 			conn = DBUtil3.getConnection();
@@ -232,14 +234,15 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 			builder.append("UPDATE JDBC_BOARD");
 			builder.append("   SET BOARD_TITLE = ?");
 			builder.append("     , BOARD_CONTENT = ?");
+			builder.append("     , BOARD_DATE = SYSDATE");
 			builder.append(" WHERE BOARD_NO = ?");
 			
 			String sql = builder.toString();
 
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, paramMap.get("title"));
-			pstmt.setString(2, paramMap.get("content"));
-			pstmt.setInt(3, boardNo);
+			pstmt.setString(1, boardVo.getBoard_title());
+			pstmt.setString(2, boardVo.getBoard_content());
+			pstmt.setInt(3, boardVo.getBoard_no());
 
 			cnt = pstmt.executeUpdate();
 
@@ -247,16 +250,7 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 			cnt = 0;
 			e.printStackTrace();
 		} finally {
-			if (pstmt != null)
-				try {
-					pstmt.close();
-				} catch (SQLException e) {
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-				}
+			disConnect();
 		}
 
 		return cnt;
@@ -289,16 +283,7 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 			cnt = 0;
 			e.printStackTrace();
 		} finally {
-			if (pstmt != null)
-				try {
-					pstmt.close();
-				} catch (SQLException e) {
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-				}
+			disConnect();
 		}
 
 		return cnt;
@@ -307,8 +292,6 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 	@Override
 	public int deleteBoard(int boardNo) {
 		int cnt = 0;
-		Connection conn = null;
-		PreparedStatement pstmt = null;
 
 		try {
 			conn = DBUtil3.getConnection();
@@ -328,16 +311,7 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 			cnt = 0;
 			e.printStackTrace();
 		} finally {
-			if (pstmt != null)
-				try {
-					pstmt.close();
-				} catch (SQLException e) {
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-				}
+			disConnect();
 		}
 
 		return cnt;
@@ -345,9 +319,6 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 
 	@Override
 	public int getBoardCount(int BoardNo) {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
 
 		int cnt = 0; // 회원ID개수가 저장될 변수
 
@@ -373,21 +344,7 @@ public class JdbcBoardDaoImpl implements IJdbcBoardDao {
 			cnt = 0;
 			e.printStackTrace();
 		} finally {
-			if (rs != null)
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			if (pstmt != null)
-				try {
-					pstmt.close();
-				} catch (SQLException e) {
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-				}
+			disConnect();
 		}
 
 		return cnt;

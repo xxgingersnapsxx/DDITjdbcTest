@@ -104,12 +104,13 @@ public class JdbcBoardController {
 		String boardContent = scan.nextLine();
 		System.out.println();
 		
-		HashMap<String, String> paramMap = new HashMap<String, String>();
+		JdbcBoardVO boardVo = new JdbcBoardVO();
 		
-		paramMap.put("title", boardTitle);
-		paramMap.put("content", boardContent);
+		boardVo.setBoard_no(boardNo);
+		boardVo.setBoard_title(boardTitle);
+		boardVo.setBoard_content(boardContent);
 		
-		int cnt = service.updateBoard(paramMap, boardNo);
+		int cnt = service.updateBoard(boardVo);
 		
 		if (cnt > 0) {
 			System.out.println(boardNo + "번글이 수정되었습니다.");
@@ -146,7 +147,7 @@ public class JdbcBoardController {
 			System.out.println("출력할 게시물이 하나도 없습니다.");
 		} else {
 			for(JdbcBoardVO boardVo : boardList) {
-				System.out.println(boardVo.getBoard_no() + "\t\t" + boardVo.getBoard_content() + "\t\t" + boardVo.getBoard_writer() + "\t\t" + boardVo.getBoard_cnt());
+				System.out.println(boardVo.getBoard_no() + "\t\t" + boardVo.getBoard_title() + "\t\t" + boardVo.getBoard_writer() + "\t\t" + boardVo.getBoard_cnt());
 			}
 			System.out.println("-------------------------------------------------------------");
 		}
@@ -201,7 +202,7 @@ public class JdbcBoardController {
 			System.out.println("출력할 게시물이 하나도 없습니다.");
 		} else {
 			for(JdbcBoardVO boardVo : boardList) {
-				System.out.println(boardVo.getBoard_no() + "\t\t" + boardVo.getBoard_content() + "\t\t" + boardVo.getBoard_writer() + "\t\t" + boardVo.getBoard_cnt());
+				System.out.println(boardVo.getBoard_no() + "\t\t" + boardVo.getBoard_title() + "\t\t" + boardVo.getBoard_writer() + "\t\t" + boardVo.getBoard_cnt());
 			}
 		}
 		

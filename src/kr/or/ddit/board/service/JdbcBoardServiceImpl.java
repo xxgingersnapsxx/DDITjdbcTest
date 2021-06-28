@@ -1,7 +1,6 @@
 package kr.or.ddit.board.service;
 
 import java.util.List;
-import java.util.Map;
 
 import kr.or.ddit.board.dao.IJdbcBoardDao;
 import kr.or.ddit.board.dao.JdbcBoardDaoImpl;
@@ -45,8 +44,8 @@ public class JdbcBoardServiceImpl implements IJdbcBoardService {
 	}
 
 	@Override
-	public int updateBoard(Map<String, String> paramMap, int boardNo) {
-		return boardDao.updateBoard(paramMap, boardNo);
+	public int updateBoard(JdbcBoardVO boardVo) {
+		return boardDao.updateBoard(boardVo);
 	}
 
 	@Override
